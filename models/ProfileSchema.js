@@ -11,6 +11,7 @@ const ProfileSchema = new mongoose.Schema({
     averageMatchDuration: { type: Number, default: 0 },
     streak: { type: Number, default: 0 },
     profilePic: { type: String, default: "" },
+    streak: { type: Number, default: 0 }, // Streak count
     lastMatchDate: { type: Date, default: null },
     activityLog: { type: Map, of: Number, default: {} },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "Profile" }],
