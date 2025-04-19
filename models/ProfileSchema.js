@@ -12,7 +12,9 @@ const ProfileSchema = new mongoose.Schema({
     streak: { type: Number, default: 0 },
     profilePic: { type: String, default: "" },
     lastMatchDate: { type: Date, default: null },
-    activityLog: { type: Map, of: Number, default: {} } 
+    activityLog: { type: Map, of: Number, default: {} },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "Profile" }],
+    friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Profile" }] 
 });
 
 module.exports = mongoose.model("Profile", ProfileSchema);
