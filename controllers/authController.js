@@ -2,7 +2,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 const User = require("../models/User");
-const Profile = require("../models/ProfileSchema");
+const Profile = require("../models/Profile");
+require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -43,10 +44,10 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
   
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ username });
     if (!user) return res.status(400).json({ msg: "Invalid Credentials" });
 
     const isMatch = await bcrypt.compare(password, user.password);
