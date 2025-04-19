@@ -30,11 +30,11 @@ const sendFriendRequest = async (req, res) => {
 // Accept friend request
 const acceptFriendRequest = async (req, res) => {
     const receiverId = req.user.id;
-    const { requesterId } = req.body;
+    const { username } = req.body;
 
     try {
         const receiver = await Profile.findOne({ user: receiverId });
-        const requester = await Profile.findById(requesterId);
+        const requester = await Profile.findOne({ username });
 
         if (!receiver || !requester) {
             return res.status(404).json({ msg: "Profile not found" });
@@ -61,44 +61,20 @@ const acceptFriendRequest = async (req, res) => {
     }
 };
 
-// Reject friend request
-const rejectFriendRequest = async (req, res) => {
-    const receiverId = req.user.id;
-    const { requesterId } = req.body;
-
-    try {
-        const receiver = await Profile.findOne({ user: receiverId });
-
-        if (!receiver) {
-            return res.status(404).json({ msg: "Profile not found" });
-        }
-
-        receiver.friendRequests = receiver.friendRequests.filter(
-            id => id.toString() !== requesterId
-        );
-
-        await receiver.save();
-        res.status(200).json({ msg: "Friend request rejected" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Server error" });
-    }
-};
-
 // Remove a friend
 const deleteFriend = async (req, res) => {
     const userId = req.user.id;
-    const { friendId } = req.body;
+    const { username } = req.body;
 
     try {
         const profile = await Profile.findOne({ user: userId });
-        const friend = await Profile.findById(friendId);
+        const friend = await Profile.findOne({ username });
 
         if (!profile || !friend) {
             return res.status(404).json({ msg: "Profile not found" });
         }
 
-        profile.friends = profile.friends.filter(id => id.toString() !== friendId);
+        profile.friends = profile.friends.filter(id => id.toString() !== friend._id.toString());
         friend.friends = friend.friends.filter(id => id.toString() !== profile._id.toString());
 
         await profile.save();
@@ -131,6 +107,30 @@ const getFriendRequests = async (req, res) => {
         if (!profile) return res.status(404).json({ msg: "Profile not found" });
 
         res.status(200).json({ friendRequests: profile.friendRequests });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Server error" });
+    }
+};
+
+const rejectFriendRequest = async (req, res) => {
+    const receiverId = req.user.id;
+    const { username } = req.body;
+
+    try {
+        const receiver = await Profile.findOne({ user: receiverId });
+        const requester = await Profile.findOne({ username });
+
+        if (!receiver || !requester) {
+            return res.status(404).json({ msg: "Profile not found" });
+        }
+
+        receiver.friendRequests = receiver.friendRequests.filter(
+            id => id.toString() !== requester._id.toString()
+        );
+
+        await receiver.save();
+        res.status(200).json({ msg: "Friend request rejected" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Server error" });
