@@ -1,7 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const connectDB = require("./config/db.js");
-const authRoutes = require("./routes/auth.js");
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 dotenv.config();
 connectDB();
@@ -9,8 +10,9 @@ connectDB();
 const app = express();
 app.use(express.json()); // body parser
 
-const PORT = process.env.PORT || 5000;
-
+// Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
