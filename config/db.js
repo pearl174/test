@@ -1,3 +1,5 @@
+// establishing external database connection to mongodb 
+// using mongoose
 const mongoose = require("mongoose");
 
 const connectDB = async() => {
