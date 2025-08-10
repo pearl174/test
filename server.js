@@ -11,10 +11,21 @@ connectDB();
 
 const app = express();
 app.use(express.json()); // body parser
+const allowedOrigins = [
+  'https://badminton-stats-tracker-frontend-n7357or3j.vercel.app',
+];
+
 app.use(cors({
-    origin: "*", // or wherever your frontend runs
-    credentials: true
-  }));  
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // Allow Postman or server-to-server requests
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('Not allowed by CORS'), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+}));
+
 
 // Routes
 app.use("/api/auth", authRoutes);
