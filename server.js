@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const friendRoutes = require("./routes/friendRoutes");
+const cors = require("cors");
 
 dotenv.config();
 connectDB();
