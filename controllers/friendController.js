@@ -103,7 +103,7 @@ const getFriendList = async (req, res) => {
 // Get incoming friend requests
 const getFriendRequests = async (req, res) => {
     try {
-        const profile = await Profile.findOne({ user: req.user.id }).populate("friendRequests", "username");
+        const profile = await Profile.findOne({ user: req.user.id }).populate("friendRequests", "username profilePic");
         if (!profile) return res.status(404).json({ msg: "Profile not found" });
 
         res.status(200).json({ friendRequests: profile.friendRequests });
@@ -137,6 +137,22 @@ const rejectFriendRequest = async (req, res) => {
     }
 };
 
+const getUsers = async (req, res) => {
+    try {
+        const currentUserId = req.user.id;
+        const selfProfile = await Profile.findOne({ user: currentUserId });
+    
+        const users = await Profile.find({
+          _id: { $ne: selfProfile._id }
+        }).select("username profilePic");
+    
+        res.status(200).json({ users });
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ msg: "Server error" });
+      }
+}
+
 module.exports = {
     sendFriendRequest,
     acceptFriendRequest,
@@ -144,4 +160,5 @@ module.exports = {
     deleteFriend,
     getFriendList,
     getFriendRequests,
+    getUsers,
 };
