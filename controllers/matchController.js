@@ -70,19 +70,16 @@ const endMatch = async (req, res) => {
         const match = await Match.findById(matchId);
         if (!match) return res.status(404).json({ msg: "Match not found" });
 
-        const endTime = new Date();
-        const duration = Math.floor((endTime - new Date(match.startTime)) / 60000);
-
         const winnerProfile = await Profile.findOne({ username: winnerUsername });
         if (!winnerProfile) return res.status(404).json({ msg: "Winner profile not found" });
 
-        // Update match
-        match.duration = duration;
-        match.score = finalScore;
-        match.winner = winnerProfile._id;
-        await match.save();
+        const endTime = new Date();
+        const duration = Math.floor((endTime - new Date(match.startTime)) / 60000); // Duration in minutes
 
-        // Update both players
+        // Update match with winner, score, and duration
+        await match.endMatch(winnerProfile._id, finalScore, duration);
+
+        // Update both players' stats
         const [player1, player2] = await Promise.all([
             Profile.findById(match.players[0]),
             Profile.findById(match.players[1]),

@@ -10,6 +10,10 @@ connectDB();
 
 const app = express();
 app.use(express.json()); // body parser
+app.use(cors({
+    origin: "*", // or wherever your frontend runs
+    credentials: true
+  }));  
 
 // Routes
 app.use("/api/auth", authRoutes);
